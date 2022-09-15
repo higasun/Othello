@@ -1,13 +1,14 @@
 dx = [1, 1, 0, -1, -1, -1, 0, 1]
 dy = [0, 1, 1, 1, 0, -1, -1, -1]
 
-GRID_LEN = 4
-COLOR_ID = {'dark': 1, 'light': -1}
+GRID_LEN = 8
+DISK2COLOR = {'Dark': 1, 'Light': -1}
 
 class Player:
-    def __init__(self, color: str) -> None:
+    def __init__(self, disk: str) -> None:
         self.count = 0
-        self.color = COLOR_ID[color]
+        self.disk = disk
+        self.color = DISK2COLOR[disk]
 
 class Board:
     def __init__(self) -> None:
@@ -18,7 +19,7 @@ class Board:
         self.grid[GRID_LEN//2 - 1][GRID_LEN//2] = 1
         self.grid[GRID_LEN//2][GRID_LEN//2 - 1] = 1
 
-    def place(self, x, y, color):
+    def place(self, x, y, color): # 返り値を「ひっくり返って増えた枚数」としても良いかも
         if self.can_place(x, y, color):
             self.grid[x][y] = color
             self.reverse()
@@ -51,29 +52,25 @@ class Board:
                 return True
         return False
 
-    def reverse(self):
+    def reverse(self, x, y, color):
         pass
-
-    def show(self):
-        label = {-1: 'o', 0: '-', 1: 'x'}
-        for i in range(GRID_LEN):
-            l = [label[x] for x in self.grid[i]]
-            print(''.join(l))
 
 
 class Game:
-    def __init__(self, you: Player, com: Player) -> None:
-        self.you = you
-        self.com = com
-
-        if you.color == 1:
-            self.player = you
-            self.next_player = com
-        else:
-            self.player = com
-            self.next_player = you
-        
+    def __init__(self) -> None:
+        self.dark_player = Player('Dark')
+        self.light_player = Player('Light')
         self.board = Board()
+
+        self.player = self.dark_player
+        self.next_player = self.light_player
+
+    def play(self):
+        self.show()
+        while True:
+            x, y = map(int, input("{}'s Turn: ".format(game.player.disk)).split())
+            self.place(x, y)
+            self.show()
     
     def place(self, x, y) -> None:
         if self.board.place(x, y, self.player.color):
@@ -81,19 +78,20 @@ class Game:
         else:
             print('You cannot place a disk there.')
             
+    def show(self):
+        label = {-1: 'o', 0: '-', 1: 'x'}
+        for i in range(GRID_LEN):
+            l = [label[x] for x in self.board.grid[i]]
+            print(''.join(l))
+        print('\n')
 
     def end(self):
-        if self.you.count > self.com.count:
-            return 'WIN'
-        elif self.you.count < self.com.count:
-            return 'LOSE'
+        if self.dark_player.count > self.light_player.count:
+            return 'Dark WIN ---- Light LOSE'
+        elif self.dark_player.count < self.light_player.count:
+            return 'Dark LOSE ---- Light WIN'
         else:
             return 'DRAW'
 
-you, com = Player('dark'), Player('light')
-game = Game(you, com)
-game.board.show()
-while True:
-    x, y = map(int, input('Turn: {}'.format(game.player.color)).split())
-    game.place(x, y)
-    game.board.show()
+game = Game()
+game.play()
