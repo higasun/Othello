@@ -94,6 +94,6 @@ you, com = Player('dark'), Player('light')
 game = Game(you, com)
 game.board.show()
 while True:
-    x, y = map(int, input().split())
+    x, y = map(int, input('Turn: {}'.format(game.player.color)).split())
     game.place(x, y)
     game.board.show()
