@@ -1,7 +1,7 @@
 dx = [1, 1, 0, -1, -1, -1, 0, 1]
 dy = [0, 1, 1, 1, 0, -1, -1, -1]
 
-GRID_LEN = 8
+GRID_LEN = 4
 COLOR_ID = {'dark': 1, 'light': -1}
 
 class Player:
@@ -18,8 +18,17 @@ class Board:
         self.grid[GRID_LEN//2 - 1][GRID_LEN//2] = 1
         self.grid[GRID_LEN//2][GRID_LEN//2 - 1] = 1
 
-    def can_put(self, x: int, y: int, color: int) -> bool:
-        if self.grid[x][y] != 0:
+    def place(self, x, y, color):
+        if self.can_place(x, y, color):
+            self.grid[x][y] = color
+            self.reverse()
+            return True
+        else:
+            return False
+
+    def can_place(self, x: int, y: int, color: int) -> bool:
+        if not(0 <= x < GRID_LEN) or not (0 <= y < GRID_LEN) \
+            or self.grid[x][y] != 0:
             return False
         
         res = False
@@ -42,6 +51,9 @@ class Board:
                 return True
         return False
 
+    def reverse(self):
+        pass
+
     def show(self):
         label = {-1: 'o', 0: '-', 1: 'x'}
         for i in range(GRID_LEN):
@@ -63,8 +75,12 @@ class Game:
         
         self.board = Board()
     
-    def place(self):
-        self.player, self.next_player = self.next_player, self.player
+    def place(self, x, y) -> None:
+        if self.board.place(x, y, self.player.color):
+            self.player, self.next_player = self.next_player, self.player
+        else:
+            print('You cannot place a disk there.')
+            
 
     def end(self):
         if self.you.count > self.com.count:
@@ -74,7 +90,10 @@ class Game:
         else:
             return 'DRAW'
 
-
-board = Board()
-board.show()
-print(board.can_put(4, 5, 1))
+you, com = Player('dark'), Player('light')
+game = Game(you, com)
+game.board.show()
+while True:
+    x, y = map(int, input().split())
+    game.place(x, y)
+    game.board.show()
