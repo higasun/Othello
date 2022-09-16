@@ -6,7 +6,7 @@ DISK2COLOR = {'Dark': 1, 'Light': -1}
 
 class Player:
     def __init__(self, disk: str) -> None:
-        self.count = 0
+        self.count = 2
         self.disk = disk
         self.color = DISK2COLOR[disk]
 
@@ -87,7 +87,8 @@ class Game:
     def place(self, x, y) -> None:
         if self.board.can_place(x, y, self.player.color):
             cnt = self.board.place(x, y, self.player.color)
-            self.player.count += cnt
+            self.player.count += cnt + 1
+            self.next_player.count -= cnt
 
             if self._check():
                 self.end()
