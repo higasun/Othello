@@ -91,7 +91,7 @@ class Game:
             self.next_player.count -= cnt
 
             if self._check():
-                self.end()
+                self._end()
             self.player, self.next_player = self.next_player, self.player
         else:
             print('You cannot place a disk there.')
@@ -113,10 +113,3 @@ class Game:
             return 'Dark LOSE ---- Light WIN'
         else:
             return 'DRAW'
-
-game = Game()
-game.show()
-while True:
-    x, y = map(int, input("{}'s Turn: ".format(game.player.disk)).split())
-    game.place(x, y)
-    game.show()
